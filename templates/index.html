@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps Flask App</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+        }
+        input[type="text"]:focus {
+            border-color: #4A90E2;
+        }
+        button {
+            padding: 12px 24px;
+            background: #4A90E2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+        button:hover { background: #357ABD; }
+        h2 {
+            color: #555;
+            font-size: 16px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+        .message-list { list-style: none; }
+        .message-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #4A90E2;
+        }
+        .message-text { color: #333; font-size: 15px; }
+        .message-time { color: #aaa; font-size: 12px; }
+        .empty { color: #aaa; text-align: center; padding: 30px; }
+        .badge {
+            display: inline-block;
+            background: #e8f4fd;
+            color: #4A90E2;
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>My DevOps Project</h1>
+        <p class="subtitle">Two-Tier Flask + MySQL App running on Docker</p>
+        <span class="badge">Flask + MySQL + Docker + Jenkins + AWS EC2</span>
+
+        <form action="/add" method="POST">
+            <div class="form-row">
+                <input type="text" name="message" placeholder="Type your message here..." required/>
+                <button type="submit">Add</button>
+            </div>
+        </form>
+
+        <h2>Messages ({{ messages|length }})</h2>
+
+        {% if messages %}
+        <ul class="message-list">
+            {% for msg, created_at in messages %}
+            <li class="message-item">
+                <span class="message-text">{{ msg }}</span>
+                <span class="message-time">{{ created_at.strftime('%d %b %Y, %H:%M') }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="empty">No messages yet. Add your first message above!</p>
+        {% endif %}
+    </div>
+</body>
+</html>
