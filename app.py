@@ -5,6 +5,9 @@ import time
 
 app = Flask(__name__)
 
+# ✅ VERSION — change this to see CI/CD working
+APP_VERSION = "v2.0 — Auto Deployed by Jenkins"
+
 def get_db():
     retries = 10
     while retries:
@@ -42,7 +45,7 @@ def index():
     cursor.execute("SELECT message, created_at FROM messages ORDER BY created_at DESC")
     messages = cursor.fetchall()
     conn.close()
-    return render_template("index.html", messages=messages)
+    return render_template("index.html", messages=messages, version=APP_VERSION)
 
 @app.route("/add", methods=["POST"])
 def add():
@@ -60,9 +63,20 @@ def health():
     try:
         conn = get_db()
         conn.close()
-        return {"status": "healthy"}, 200
+        return {"status": "healthy", "version": APP_VERSION}, 200
     except Exception as e:
         return {"status": "unhealthy", "error": str(e)}, 500
+
+# ✅ NEW ROUTE — proof that new code was deployed
+@app.route("/about")
+def about():
+    return {
+        "project": "Two-Tier Flask DevOps Pipeline",
+        "version": APP_VERSION,
+        "author": "Kandukuri Dinakar Reddy",
+        "pipeline": "GitHub → Jenkins → Docker → EC2",
+        "message": "If you see this, your CI/CD pipeline is working perfectly!"
+    }
 
 if __name__ == "__main__":
     print("Waiting for database...")

@@ -3,118 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevOps Flask App</title>
+    <title>DevOps Project - Message Board</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: Arial, sans-serif;
-            background: #f0f2f5;
-            display: flex;
-            justify-content: center;
-            padding: 40px 20px;
+            font-family: 'Segoe UI', sans-serif;
+            background: #0f0f0f;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
         }
+
+        /* ✅ VERSION BANNER — this is the proof CI/CD worked */
+        .version-banner {
+            background: linear-gradient(90deg, #00c851, #007e33);
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+        }
+
         .container {
-            background: white;
-            border-radius: 12px;
-            padding: 40px;
-            width: 100%;
-            max-width: 600px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            max-width: 700px;
+            margin: 0 auto;
         }
+
         h1 {
-            color: #333;
-            margin-bottom: 8px;
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #ffffff;
         }
+
         .subtitle {
             color: #888;
-            font-size: 14px;
+            font-size: 13px;
             margin-bottom: 30px;
         }
-        .form-row {
+
+        .input-area {
             display: flex;
             gap: 10px;
             margin-bottom: 30px;
         }
+
         input[type="text"] {
             flex: 1;
             padding: 12px 16px;
-            border: 1px solid #ddd;
+            background: #1e1e1e;
+            border: 1px solid #333;
             border-radius: 8px;
+            color: #fff;
             font-size: 15px;
             outline: none;
         }
+
         input[type="text"]:focus {
-            border-color: #4A90E2;
+            border-color: #00c851;
         }
+
         button {
             padding: 12px 24px;
-            background: #4A90E2;
+            background: #00c851;
             color: white;
             border: none;
             border-radius: 8px;
             font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
         }
-        button:hover { background: #357ABD; }
-        h2 {
-            color: #555;
-            font-size: 16px;
-            margin-bottom: 16px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 8px;
+
+        button:hover {
+            background: #00a844;
         }
-        .message-list { list-style: none; }
-        .message-item {
+
+        .messages-list {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 16px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border-left: 4px solid #4A90E2;
+            flex-direction: column;
+            gap: 12px;
         }
-        .message-text { color: #333; font-size: 15px; }
-        .message-time { color: #aaa; font-size: 12px; }
-        .empty { color: #aaa; text-align: center; padding: 30px; }
-        .badge {
-            display: inline-block;
-            background: #e8f4fd;
-            color: #4A90E2;
+
+        .message-card {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-left: 4px solid #00c851;
+            border-radius: 8px;
+            padding: 14px 18px;
+        }
+
+        .message-text {
+            font-size: 15px;
+            color: #e0e0e0;
+            margin-bottom: 6px;
+        }
+
+        .message-time {
             font-size: 12px;
-            padding: 4px 10px;
-            border-radius: 20px;
-            margin-bottom: 20px;
+            color: #555;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #444;
+            padding: 40px;
+            font-size: 14px;
+        }
+
+        .about-link {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 13px;
+            color: #555;
+        }
+
+        .about-link a {
+            color: #00c851;
+            text-decoration: none;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>My DevOps Project</h1>
-        <p class="subtitle">Two-Tier Flask + MySQL App running on Docker</p>
-        <span class="badge">Flask + MySQL + Docker + Jenkins + AWS EC2</span>
 
-        <form action="/add" method="POST">
-            <div class="form-row">
-                <input type="text" name="message" placeholder="Type your message here..." required/>
-                <button type="submit">Add</button>
-            </div>
+        <!-- ✅ VERSION BANNER — change APP_VERSION in app.py and commit to test pipeline -->
+        <div class="version-banner">
+            🚀 {{ version }} — Pipeline Test Successful
+        </div>
+
+        <h1>📋 Message Board</h1>
+        <p class="subtitle">Two-Tier Flask + MySQL on AWS EC2</p>
+
+        <form class="input-area" action="/add" method="POST">
+            <input type="text" name="message" placeholder="Type your message here..." required />
+            <button type="submit">Add</button>
         </form>
 
-        <h2>Messages ({{ messages|length }})</h2>
+        <div class="messages-list">
+            {% if messages %}
+                {% for msg, created_at in messages %}
+                <div class="message-card">
+                    <div class="message-text">{{ msg }}</div>
+                    <div class="message-time">{{ created_at }}</div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">No messages yet. Add one above!</div>
+            {% endif %}
+        </div>
 
-        {% if messages %}
-        <ul class="message-list">
-            {% for msg, created_at in messages %}
-            <li class="message-item">
-                <span class="message-text">{{ msg }}</span>
-                <span class="message-time">{{ created_at.strftime('%d %b %Y, %H:%M') }}</span>
-            </li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <p class="empty">No messages yet. Add your first message above!</p>
-        {% endif %}
+        <div class="about-link">
+            <a href="/about">View /about endpoint →</a>
+        </div>
+
     </div>
 </body>
 </html>
